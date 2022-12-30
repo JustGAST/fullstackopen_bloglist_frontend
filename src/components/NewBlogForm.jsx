@@ -7,17 +7,13 @@ const NewBlogForm = ({onSubmit}) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    try {
-      onSubmit({
-        title, author, url
-      });
+    onSubmit({
+      title, author, url
+    });
 
-      setTitle('');
-      setAuthor('');
-      setUrl('');
-    } catch (exception) {
-      console.log(exception);
-    }
+    setTitle('');
+    setAuthor('');
+    setUrl('');
   }
 
   return (

@@ -3,6 +3,7 @@ import blogService from './services/blogs';
 import loginService from './services/login';
 import Blog from './components/Blog';
 import NewBlogForm from './components/NewBlogForm';
+import Notification from './components/Notification';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -10,6 +11,9 @@ function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+
+  const emptyNotification = {message: null, type: null};
+  const [notification, setNotification] = useState(emptyNotification);
 
   useEffect(() => {
     blogService.getAll().then((allBlogs) => setBlogs(allBlogs));
@@ -24,7 +28,14 @@ function App() {
     const tokenData = JSON.parse(userData);
     setUser(tokenData);
     blogService.setToken(tokenData.token)
-  }, [])
+  }, []);
+
+  const showNotification = (message, type) => {
+    setNotification({message, type})
+    setTimeout(() => {
+      setNotification(emptyNotification);
+    }, 5000);
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -35,12 +46,13 @@ function App() {
       });
 
       localStorage.setItem('loggedBlogsAppUser', JSON.stringify(userData))
+      blogService.setToken(userData.token);
       setUser(userData);
       setUsername('');
       setPassword('');
     } catch (exception) {
       console.log(exception);
-      alert(exception.response.data.error);
+      showNotification(exception.response.data.error, 'danger');
     }
   }
 
@@ -52,9 +64,12 @@ function App() {
   const handleNewBlogFormSubmit = async (blogData) => {
     try {
       const newBlog = await blogService.create(blogData);
+
+      showNotification(`A new blog ${blogData.title} by ${blogData.author} was added`, 'success');
       setBlogs(blogs.concat(newBlog));
     } catch (exception) {
       console.log(exception);
+      showNotification(exception.response.data.error, 'danger');
     }
   }
 
@@ -62,6 +77,7 @@ function App() {
     return (
       <div>
         <h1>Login to application</h1>
+        {notification.message && <Notification message={notification.message} type={notification.type} />}
         <form onSubmit={handleLogin}>
           <div>
             <label>
@@ -86,6 +102,7 @@ function App() {
   return (
     <div>
       <h1>Blogs</h1>
+      {notification.message && <Notification message={notification.message} type={notification.type} />}
       <div>
         {user.name} logged in {' '}
         <button onClick={handleLogout}>Log out</button>

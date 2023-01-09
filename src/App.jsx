@@ -17,7 +17,7 @@ function App() {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((allBlogs) => setBlogs(allBlogs));
+    blogService.getAll().then((allBlogs) => setBlogs(sortBlogsByLikes(allBlogs)));
   }, []);
 
   useEffect(() => {
@@ -30,6 +30,14 @@ function App() {
     setUser(tokenData);
     blogService.setToken(tokenData.token)
   }, []);
+
+  const sortBlogsByLikes = (blogs) => {
+    console.log(blogs);
+    let sorted = blogs.sort((first, second) => first.title > second.title ? 1 : -1);
+    sorted = sorted.sort((first, second) => first.likes > second.likes ? 1 : -1);
+    console.log(sorted);
+    return sorted;
+  }
 
   const showNotification = (message, type) => {
     setNotification({message, type})
@@ -74,7 +82,11 @@ function App() {
   const likeBlog = (blog) => async () => {
     try {
       const updatedBlog = await blogService.update({...blog, likes: blog.likes + 1})
-      setBlogs(blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog))
+      setBlogs(
+        sortBlogsByLikes(
+          blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog)
+        )
+      )
     } catch (e) {
       console.log(e);
     }

@@ -32,11 +32,10 @@ function App() {
   }, []);
 
   const sortBlogsByLikes = (blogs) => {
-    console.log(blogs);
-    let sorted = blogs.sort((first, second) => first.title > second.title ? 1 : -1);
-    sorted = sorted.sort((first, second) => first.likes > second.likes ? 1 : -1);
-    console.log(sorted);
-    return sorted;
+    blogs.sort((first, second) => first.title > second.title ? 1 : -1);
+    blogs.sort((first, second) => first.likes > second.likes ? 1 : -1);
+
+    return blogs;
   }
 
   const showNotification = (message, type) => {

@@ -15,20 +15,12 @@ const getAll = async () => {
 };
 
 const create = async (blogData) => {
-  const config = {
-    headers: {Authorization: token}
-  }
-
-  const response = await axios.post(baseUrl, blogData, config);
+  const response = await axios.post(baseUrl, blogData, getConfigWithAuth());
 
   return response.data;
 }
 
 const update = async (blog) => {
-  const config = {
-    headers: {Authorization: token}
-  }
-
   const user = blog.user?.id;
   const {author, url, title, likes} = blog;
 
@@ -36,13 +28,23 @@ const update = async (blog) => {
     author, url, title, likes, user
   };
 
-  const response = await axios.put(`${baseUrl}/${blog.id}`, requestData, config);
+  const response = await axios.put(`${baseUrl}/${blog.id}`, requestData, getConfigWithAuth());
 
   return response.data;
 }
 
+const remove = async (blog) => {
+  const response = await axios.delete(`${baseUrl}/${blog.id}`, getConfigWithAuth());
+
+  return response.data;
+}
+
+const getConfigWithAuth = () => ({
+  headers: {Authorization: token}
+})
+
 const blogService = {
-  setToken, getAll, create, update
+  setToken, getAll, create, update, remove
 }
 
 export default blogService;

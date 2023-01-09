@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-function Blog({ blog, onLikeBlog }) {
+function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
   const [expanded, setExpanded] = useState(false);
 
   const blogStyle = {
@@ -18,6 +18,9 @@ function Blog({ blog, onLikeBlog }) {
           <div>{blog.url}</div>
           <div>Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button></div>
           <div>{blog.user && blog.user.name}</div>
+          {user && blog.user && user.username === blog.user.username && (
+            <button onClick={onRemoveBlog}>Remove</button>
+          )}
         </>
       )}
     </div>

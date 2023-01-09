@@ -17,7 +17,7 @@ function App() {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((allBlogs) => setBlogs(sortBlogsByLikes(allBlogs)));
+    blogService.getAll().then((allBlogs) => setSortedBlogsByLikes(allBlogs));
   }, []);
 
   useEffect(() => {
@@ -31,11 +31,11 @@ function App() {
     blogService.setToken(tokenData.token)
   }, []);
 
-  const sortBlogsByLikes = (blogs) => {
+  const setSortedBlogsByLikes = (blogs) => {
     blogs.sort((first, second) => first.title > second.title ? 1 : -1);
     blogs.sort((first, second) => first.likes > second.likes ? 1 : -1);
 
-    return blogs;
+    setBlogs(blogs);
   }
 
   const showNotification = (message, type) => {
@@ -71,7 +71,7 @@ function App() {
 
       blogFormRef.current.toggleVisible();
       showNotification(`A new blog ${blogData.title} by ${blogData.author} was added`, 'success');
-      setBlogs(blogs.concat(newBlog));
+      setSortedBlogsByLikes(blogs.concat(newBlog));
     } catch (exception) {
       console.log(exception);
       showNotification(exception.response.data.error, 'danger');
@@ -80,12 +80,26 @@ function App() {
 
   const likeBlog = (blog) => async () => {
     try {
-      const updatedBlog = await blogService.update({...blog, likes: blog.likes + 1})
-      setBlogs(
-        sortBlogsByLikes(
-          blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog)
-        )
-      )
+      const updatedBlog = await blogService.update({...blog, likes: blog.likes + 1});
+      setSortedBlogsByLikes(
+        blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog)
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const removeBlog = (blog) => async () => {
+    try {
+      if (!window.confirm(`Really remove blog ${blog.title} by ${blog.author}?`)) {
+        return;
+      }
+
+      await blogService.remove(blog);
+      showNotification(`Blog "${blog.title}" by ${blog.author} was successfully removed`, 'success')
+      setSortedBlogsByLikes(
+        blogs.filter(existingBlog => existingBlog.id !== blog.id)
+      );
     } catch (e) {
       console.log(e);
     }
@@ -113,7 +127,7 @@ function App() {
       )}
       <div>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} onLikeBlog={likeBlog(blog)} />
+          <Blog key={blog.id} blog={blog} user={user} onLikeBlog={likeBlog(blog)} onRemoveBlog={removeBlog(blog)} />
         ))}
       </div>
     </div>

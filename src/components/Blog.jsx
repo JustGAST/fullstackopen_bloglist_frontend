@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-function Blog({ blog }) {
+function Blog({ blog, onLikeBlog }) {
   const [expanded, setExpanded] = useState(false);
 
   const blogStyle = {
@@ -9,8 +9,6 @@ function Blog({ blog }) {
     margin: '5px 0'
   };
 
-  console.log(blog);
-
   return (
     <div style={blogStyle}>
       {blog.title} by {blog.author}
@@ -18,7 +16,7 @@ function Blog({ blog }) {
       {expanded && (
         <>
           <div>{blog.url}</div>
-          <div>Likes: {blog.likes} <button>Like</button></div>
+          <div>Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button></div>
           <div>{blog.user && blog.user.name}</div>
         </>
       )}

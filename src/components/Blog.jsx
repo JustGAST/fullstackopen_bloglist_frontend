@@ -1,13 +1,14 @@
-import {useState} from 'react';
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false)
 
   const blogStyle = {
     padding: '5px',
     border: '1px solid black',
     margin: '5px 0'
-  };
+  }
 
   return (
     <div style={blogStyle}>
@@ -24,7 +25,25 @@ function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
         </>
       )}
     </div>
-  );
+  )
 }
 
-export default Blog;
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    user: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      username: PropTypes.string.isRequired
+    }),
+  }).isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+  }).isRequired,
+  onLikeBlog: PropTypes.func.isRequired,
+  onRemoveBlog: PropTypes.func.isRequired,
+}
+
+export default Blog

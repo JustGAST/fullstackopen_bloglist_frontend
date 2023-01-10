@@ -16,8 +16,8 @@ function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
       <button onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'}</button>
       {expanded && (
         <>
-          <div>{blog.url}</div>
-          <div>Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button></div>
+          <div className='blog-url'>{blog.url}</div>
+          <div className='blog-likes'>Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button></div>
           <div>{blog.user && blog.user.name}</div>
           {user && blog.user && user.username === blog.user.username && (
             <button onClick={onRemoveBlog}>Remove</button>

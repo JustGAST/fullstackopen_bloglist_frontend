@@ -35,6 +35,11 @@ Cypress.Commands.add('login', (username, password) => {
   })
 })
 
+Cypress.Commands.add('logout', () => {
+  localStorage.removeItem('loggedBlogsAppUser')
+  cy.visit(baseUrl)
+})
+
 Cypress.Commands.add('createBlog', (title, author, url) => {
   const token = JSON.parse(localStorage.getItem('loggedBlogsAppUser')).token
   cy.request({

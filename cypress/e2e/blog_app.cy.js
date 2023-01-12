@@ -104,7 +104,7 @@ describe('Blog app', () => {
       cy.get('@blogItem').should('not.contain', 'Remove')
     })
 
-    it.only('sorts blogs by likes', function() {
+    it('sorts blogs by likes', function() {
       cy.createBlog('Blog one', 'Author one', 'https://one.com')
       cy.createBlog('Blog two', 'Author two', 'https://two.com')
       cy.createBlog('Blog three', 'Author three', 'https://three.com')

@@ -1,6 +1,6 @@
 describe('Blog app', () => {
+  const baseUrl = 'http://localhost:3000'
   beforeEach(function() {
-    const baseUrl = 'http://localhost:3000'
     cy.request('POST', `${baseUrl}/api/testing/reset`)
     cy.request('POST', `${baseUrl}/api/users/`, {
       username: 'test_user',
@@ -52,10 +52,7 @@ describe('Blog app', () => {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.contains('Login').click()
-      cy.get('input[name=username]').type('test_user')
-      cy.get('input[name=password]').type('123456')
-      cy.get('button[type=submit]').click()
+      cy.login('test_user', '123456')
     })
 
     it('a blog can be created', function() {
@@ -71,20 +68,15 @@ describe('Blog app', () => {
       cy.get('.blog-item').contains('Test title by Test Author').contains('View')
     })
 
-    it.only('a blog can be liked', function() {
-      cy.contains('Create new').click()
-      cy.get('input[name=title]').type('Test title')
-      cy.get('input[name=author]').type('Test Author')
-      cy.get('input[name=url]').type('https://test.com')
-      cy.get('button[type=submit]').click()
+    it('a blog can be liked', function() {
+      cy.createBlog('Test title', 'Test Author', 'https://test.com')
 
-      cy.get('.blog-item').then((blogItem) => {
-        cy.get(blogItem).contains('View').click()
-        cy.get(blogItem).contains('Like').click()
-        cy.get(blogItem).contains('Likes: 1')
-        cy.get(blogItem).contains('Like').click()
-        cy.get(blogItem).contains('Likes: 2')
-      })
+      cy.get('.blog-item').as('blogItem')
+      cy.get('@blogItem').contains('View').click()
+      cy.get('@blogItem').contains('Like').click()
+      cy.get('@blogItem').contains('Likes: 1')
+      cy.get('@blogItem').contains('Like').click()
+      cy.get('@blogItem').contains('Likes: 2')
     })
   })
 })

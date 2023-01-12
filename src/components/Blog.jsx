@@ -11,7 +11,7 @@ function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className="blog-item" style={blogStyle}>
       {blog.title} by {blog.author}
       <button onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'}</button>
       {expanded && (

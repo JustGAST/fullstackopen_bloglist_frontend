@@ -49,4 +49,26 @@ describe('Blog app', () => {
         .and('have.css', 'border-color', 'rgb(139, 0, 0)')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.contains('Login').click()
+      cy.get('input[name=username]').type('test_user')
+      cy.get('input[name=password]').type('123456')
+      cy.get('button[type=submit]').click()
+    })
+
+    it.only('a blog can be created', function() {
+      cy.contains('Create new').click()
+      cy.get('input[name=title]').type('Test title')
+      cy.get('input[name=author]').type('Test Author')
+      cy.get('input[name=url]').type('https://test.com')
+      cy.get('button[type=submit]').click()
+
+      cy.get('.notification.success').should('exist')
+      cy.contains('A new blog Test title by Test Author was added')
+
+      cy.get('.blog-item').contains('Test title by Test Author').contains('View')
+    })
+  })
 })

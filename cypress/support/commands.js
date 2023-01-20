@@ -24,34 +24,37 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-const baseUrl = 'http://localhost:3000'
+const baseUrl = 'http://localhost:3000';
 
 Cypress.Commands.add('login', (username, password) => {
   cy.request('POST', `${baseUrl}/api/login`, {
-    username, password
+    username,
+    password,
   }).then((response) => {
-    localStorage.setItem('loggedBlogsAppUser', JSON.stringify(response.body))
-    cy.visit(baseUrl)
-  })
-})
+    localStorage.setItem('loggedBlogsAppUser', JSON.stringify(response.body));
+    cy.visit(baseUrl);
+  });
+});
 
 Cypress.Commands.add('logout', () => {
-  localStorage.removeItem('loggedBlogsAppUser')
-  cy.visit(baseUrl)
-})
+  localStorage.removeItem('loggedBlogsAppUser');
+  cy.visit(baseUrl);
+});
 
 Cypress.Commands.add('createBlog', (title, author, url) => {
-  const token = JSON.parse(localStorage.getItem('loggedBlogsAppUser')).token
+  const token = JSON.parse(localStorage.getItem('loggedBlogsAppUser')).token;
   cy.request({
     method: 'POST',
     url: `${baseUrl}/api/blogs`,
     body: {
-      title, author, url
+      title,
+      author,
+      url,
     },
     headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  cy.visit(baseUrl)
-})
+  cy.visit(baseUrl);
+});

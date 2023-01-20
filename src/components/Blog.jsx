@@ -1,23 +1,27 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false);
 
   const blogStyle = {
     padding: '5px',
     border: '1px solid black',
-    margin: '5px 0'
-  }
+    margin: '5px 0',
+  };
 
   return (
     <div className="blog-item" style={blogStyle}>
       {blog.title} by {blog.author}
-      <button onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'}</button>
+      <button onClick={() => setExpanded(!expanded)}>
+        {expanded ? 'Hide' : 'View'}
+      </button>
       {expanded && (
         <>
-          <div className='blog-url'>{blog.url}</div>
-          <div className='blog-likes'>Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button></div>
+          <div className="blog-url">{blog.url}</div>
+          <div className="blog-likes">
+            Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button>
+          </div>
           <div>{blog.user && blog.user.name}</div>
           {user && blog.user && user.username === blog.user.username && (
             <button onClick={onRemoveBlog}>Remove</button>
@@ -25,7 +29,7 @@ function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
         </>
       )}
     </div>
-  )
+  );
 }
 
 Blog.propTypes = {
@@ -36,7 +40,7 @@ Blog.propTypes = {
     likes: PropTypes.number.isRequired,
     user: PropTypes.shape({
       name: PropTypes.string.isRequired,
-      username: PropTypes.string.isRequired
+      username: PropTypes.string.isRequired,
     }),
   }).isRequired,
   user: PropTypes.shape({
@@ -44,6 +48,6 @@ Blog.propTypes = {
   }).isRequired,
   onLikeBlog: PropTypes.func.isRequired,
   onRemoveBlog: PropTypes.func.isRequired,
-}
+};
 
-export default Blog
+export default Blog;

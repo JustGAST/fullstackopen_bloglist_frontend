@@ -12,19 +12,20 @@ import {
   emptyNotification,
   setNotification,
 } from './reducers/notificationReducer';
+import { addBlog, getBlogs, setBlogs } from './reducers/blogReducer';
 
 function App() {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
 
   const notification = useSelector((state) => state.notification);
+  const blogs = useSelector((state) => state.blogs);
 
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((allBlogs) => setSortedBlogsByLikes(allBlogs));
+    dispatch(getBlogs());
   }, []);
 
   useEffect(() => {
@@ -37,13 +38,6 @@ function App() {
     setUser(tokenData);
     blogService.setToken(tokenData.token);
   }, []);
-
-  const setSortedBlogsByLikes = (blogs) => {
-    blogs.sort((first, second) => (first.title > second.title ? 1 : -1));
-    blogs.sort((first, second) => (first.likes > second.likes ? 1 : -1));
-
-    setBlogs(blogs);
-  };
 
   const showNotification = (message, type) => {
     dispatch(setNotification({ message, type }));
@@ -82,7 +76,7 @@ function App() {
         `A new blog ${blogData.title} by ${blogData.author} was added`,
         'success'
       );
-      setSortedBlogsByLikes(blogs.concat(newBlog));
+      dispatch(addBlog(newBlog));
     } catch (exception) {
       console.log(exception);
       showNotification(exception.response.data.error, 'danger');
@@ -95,8 +89,10 @@ function App() {
         ...blog,
         likes: blog.likes + 1,
       });
-      setSortedBlogsByLikes(
-        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+      dispatch(
+        setBlogs(
+          blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+        )
       );
     } catch (e) {
       console.log(e);
@@ -116,8 +112,8 @@ function App() {
         `Blog "${blog.title}" by ${blog.author} was successfully removed`,
         'success'
       );
-      setSortedBlogsByLikes(
-        blogs.filter((existingBlog) => existingBlog.id !== blog.id)
+      dispatch(
+        setBlogs(blogs.filter((existingBlog) => existingBlog.id !== blog.id))
       );
     } catch (e) {
       console.log(e);

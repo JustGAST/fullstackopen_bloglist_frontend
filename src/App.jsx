@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import blogService from './services/blogs';
 import loginService from './services/login';
 import Blog from './components/Blog';
@@ -6,13 +8,18 @@ import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import Togglable from './components/Togglable';
+import {
+  emptyNotification,
+  setNotification,
+} from './reducers/notificationReducer';
 
 function App() {
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
 
-  const emptyNotification = { message: null, type: null };
-  const [notification, setNotification] = useState(emptyNotification);
+  const notification = useSelector((state) => state.notification);
 
   const blogFormRef = useRef();
 
@@ -39,9 +46,9 @@ function App() {
   };
 
   const showNotification = (message, type) => {
-    setNotification({ message, type });
+    dispatch(setNotification({ message, type }));
     setTimeout(() => {
-      setNotification(emptyNotification);
+      dispatch(emptyNotification());
     }, 5000);
   };
 

@@ -1,26 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import blogService from './services/blogs';
-import loginService from './services/login';
 import Blog from './components/Blog';
 import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import Togglable from './components/Togglable';
 import {
-  emptyNotification,
-  setNotification,
-} from './reducers/notificationReducer';
-import { addBlog, getBlogs, setBlogs } from './reducers/blogReducer';
+  createBlog,
+  getBlogs,
+  likeBlog,
+  removeBlog,
+} from './reducers/blogReducer';
+import { checkIfUserLoggedIn, login, logout } from './reducers/userReducer';
 
 function App() {
   const dispatch = useDispatch();
 
-  const [user, setUser] = useState(null);
-
   const notification = useSelector((state) => state.notification);
   const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
 
   const blogFormRef = useRef();
 
@@ -29,95 +27,30 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const userData = localStorage.getItem('loggedBlogsAppUser');
-    if (!userData) {
-      return;
-    }
-
-    const tokenData = JSON.parse(userData);
-    setUser(tokenData);
-    blogService.setToken(tokenData.token);
+    dispatch(checkIfUserLoggedIn());
   }, []);
 
-  const showNotification = (message, type) => {
-    dispatch(setNotification({ message, type }));
-    setTimeout(() => {
-      dispatch(emptyNotification());
-    }, 5000);
-  };
-
-  const handleLogin = async ({ username, password }) => {
-    try {
-      const userData = await loginService.login({
-        username,
-        password,
-      });
-
-      localStorage.setItem('loggedBlogsAppUser', JSON.stringify(userData));
-      blogService.setToken(userData.token);
-      setUser(userData);
-    } catch (exception) {
-      console.log(exception);
-      showNotification(exception.response.data.error, 'danger');
-    }
+  const handleLogin = async (credentials) => {
+    dispatch(login(credentials));
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('loggedBlogsAppUser');
-    setUser(null);
+    dispatch(logout());
   };
 
   const handleNewBlogFormSubmit = async (blogData) => {
-    try {
-      const newBlog = await blogService.create(blogData);
-
-      blogFormRef.current.toggleVisible();
-      showNotification(
-        `A new blog ${blogData.title} by ${blogData.author} was added`,
-        'success'
-      );
-      dispatch(addBlog(newBlog));
-    } catch (exception) {
-      console.log(exception);
-      showNotification(exception.response.data.error, 'danger');
-    }
+    blogFormRef.current.toggleVisible();
+    dispatch(createBlog(blogData));
   };
 
-  const likeBlog = (blog) => async () => {
-    try {
-      const updatedBlog = await blogService.update({
-        ...blog,
-        likes: blog.likes + 1,
-      });
-      dispatch(
-        setBlogs(
-          blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-        )
-      );
-    } catch (e) {
-      console.log(e);
+  const handleRemoveBlog = (blog) => () => {
+    if (
+      !window.confirm(`Really remove blog ${blog.title} by ${blog.author}?`)
+    ) {
+      return;
     }
-  };
 
-  const removeBlog = (blog) => async () => {
-    try {
-      if (
-        !window.confirm(`Really remove blog ${blog.title} by ${blog.author}?`)
-      ) {
-        return;
-      }
-
-      await blogService.remove(blog);
-      showNotification(
-        `Blog "${blog.title}" by ${blog.author} was successfully removed`,
-        'success'
-      );
-      dispatch(
-        setBlogs(blogs.filter((existingBlog) => existingBlog.id !== blog.id))
-      );
-    } catch (e) {
-      console.log(e);
-    }
+    dispatch(removeBlog(blog));
   };
 
   return (
@@ -148,8 +81,8 @@ function App() {
             key={blog.id}
             blog={blog}
             user={user}
-            onLikeBlog={likeBlog(blog)}
-            onRemoveBlog={removeBlog(blog)}
+            onLikeBlog={() => dispatch(likeBlog(blog))}
+            onRemoveBlog={handleRemoveBlog(blog)}
           />
         ))}
       </div>

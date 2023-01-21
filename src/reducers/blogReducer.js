@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import blogService from '../services/blogs';
+import { showNotification } from './notificationReducer';
 
 const blogReducer = createSlice({
   name: 'blogs',
@@ -28,6 +29,63 @@ const getBlogs = () => {
   };
 };
 
+const createBlog = (blogData) => async (dispatch) => {
+  try {
+    const newBlog = await blogService.create(blogData);
+
+    dispatch(
+      showNotification(
+        `A new blog ${blogData.title} by ${blogData.author} was added`,
+        'success'
+      )
+    );
+    dispatch(addBlog(newBlog));
+  } catch (exception) {
+    console.log(exception);
+    dispatch(showNotification(exception.response.data.error, 'danger'));
+  }
+};
+
+const likeBlog = (blog) => async (dispatch, getState) => {
+  try {
+    const updatedBlog = await blogService.update({
+      ...blog,
+      likes: blog.likes + 1,
+    });
+
+    let { blogs } = getState();
+
+    dispatch(
+      setBlogs(
+        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+      )
+    );
+  } catch (e) {
+    console.log(e);
+    dispatch(showNotification(`Error while liking blog ${e}`, 'danger'));
+  }
+};
+
+const removeBlog = (blog) => async (dispatch, getState) => {
+  try {
+    await blogService.remove(blog);
+    dispatch(
+      showNotification(
+        `Blog "${blog.title}" by ${blog.author} was successfully removed`,
+        'success'
+      )
+    );
+
+    let { blogs } = getState();
+    dispatch(
+      setBlogs(blogs.filter((existingBlog) => existingBlog.id !== blog.id))
+    );
+  } catch (e) {
+    console.log(e);
+    dispatch(showNotification(`Error while removing blog ${e}`, 'danger'));
+  }
+};
+
 export const { setBlogs, addBlog } = blogReducer.actions;
-export { getBlogs };
+export { getBlogs, createBlog, likeBlog, removeBlog };
 export default blogReducer.reducer;

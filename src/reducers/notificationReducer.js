@@ -15,6 +15,20 @@ const notificationReducer = createSlice({
   },
 });
 
+let timeoutId;
+const showNotification = (message, type) => (dispatch) => {
+  debugger;
+  dispatch(setNotification({ message, type }));
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+
+  timeoutId = setTimeout(() => {
+    dispatch(emptyNotification());
+  }, 5000);
+};
+
 export const { setNotification, emptyNotification } =
   notificationReducer.actions;
+export { showNotification };
 export default notificationReducer.reducer;

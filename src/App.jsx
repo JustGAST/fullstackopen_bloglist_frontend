@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useMatch } from 'react-router-dom';
 
 import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
@@ -10,17 +10,30 @@ import { createBlog, getBlogs } from './reducers/blogReducer';
 import { checkIfUserLoggedIn, login, logout } from './reducers/userReducer';
 import BlogsPage from './pages/BlogsPage';
 import UsersPage from './pages/UsersPage';
+import UserPage from './pages/UserPage';
+import { getUsers } from './reducers/usersReducer';
 
 function App() {
   const dispatch = useDispatch();
+  const match = useMatch('/users/:id');
 
   const notification = useSelector((state) => state.notification);
   const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.users);
+
+  const userOnPage =
+    match && users
+      ? users.find((currentUser) => currentUser.id === match.params.id)
+      : null;
 
   const blogFormRef = useRef();
 
   useEffect(() => {
     dispatch(getBlogs());
+  }, []);
+
+  useEffect(() => {
+    dispatch(getUsers());
   }, []);
 
   useEffect(() => {
@@ -64,6 +77,7 @@ function App() {
       )}
 
       <Routes>
+        <Route path={'/users/:id'} element={<UserPage user={userOnPage} />} />
         <Route path={'/users'} element={<UsersPage />} />
         <Route path={'/'} element={<BlogsPage />} />
       </Routes>

@@ -13,11 +13,11 @@ const usersReducer = createSlice({
 
 export const { setUsers } = usersReducer.actions;
 
-const getAll = () => async (dispatch) => {
+const getUsers = () => async (dispatch) => {
   const users = await usersService.getAll();
 
   dispatch(setUsers(users));
 };
 
-export { getAll };
+export { getUsers };
 export default usersReducer.reducer;

@@ -12,19 +12,26 @@ import BlogsPage from './pages/BlogsPage';
 import UsersPage from './pages/UsersPage';
 import UserPage from './pages/UserPage';
 import { getUsers } from './reducers/usersReducer';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   const dispatch = useDispatch();
-  const match = useMatch('/users/:id');
+  const userMatch = useMatch('/users/:id');
+  const blogMatch = useMatch('/blogs/:id');
 
   const notification = useSelector((state) => state.notification);
   const user = useSelector((state) => state.user);
   const users = useSelector((state) => state.users);
+  const blogs = useSelector((state) => state.blogs);
 
   const userOnPage =
-    match && users
-      ? users.find((currentUser) => currentUser.id === match.params.id)
+    userMatch && users
+      ? users.find((currentUser) => currentUser.id === userMatch.params.id)
       : null;
+
+  const blogOnPage = blogMatch
+    ? blogs.find((currentBlog) => currentBlog.id === blogMatch.params.id)
+    : null;
 
   const blogFormRef = useRef();
 
@@ -77,6 +84,7 @@ function App() {
       )}
 
       <Routes>
+        <Route path={'/blogs/:id'} element={<BlogPage blog={blogOnPage} />} />
         <Route path={'/users/:id'} element={<UserPage user={userOnPage} />} />
         <Route path={'/users'} element={<UsersPage />} />
         <Route path={'/'} element={<BlogsPage />} />

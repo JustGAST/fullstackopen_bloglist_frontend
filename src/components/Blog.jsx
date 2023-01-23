@@ -1,9 +1,7 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
-  const [expanded, setExpanded] = useState(false);
-
+function Blog({ blog }) {
   const blogStyle = {
     padding: '5px',
     border: '1px solid black',
@@ -12,22 +10,9 @@ function Blog({ blog, user, onLikeBlog, onRemoveBlog }) {
 
   return (
     <div className="blog-item" style={blogStyle}>
-      {blog.title} by {blog.author}
-      <button onClick={() => setExpanded(!expanded)}>
-        {expanded ? 'Hide' : 'View'}
-      </button>
-      {expanded && (
-        <>
-          <div className="blog-url">{blog.url}</div>
-          <div className="blog-likes">
-            Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button>
-          </div>
-          <div>{blog.user && blog.user.name}</div>
-          {user && blog.user && user.username === blog.user.username && (
-            <button onClick={onRemoveBlog}>Remove</button>
-          )}
-        </>
-      )}
+      <Link to={`/blogs/${blog.id}`}>
+        {blog.title} by {blog.author}
+      </Link>
     </div>
   );
 }
@@ -43,11 +28,6 @@ Blog.propTypes = {
       username: PropTypes.string.isRequired,
     }),
   }).isRequired,
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-  }).isRequired,
-  onLikeBlog: PropTypes.func.isRequired,
-  onRemoveBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;

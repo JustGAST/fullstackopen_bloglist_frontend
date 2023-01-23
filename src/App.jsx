@@ -1,23 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Blog from './components/Blog';
+import { Route, Routes } from 'react-router-dom';
+
 import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import Togglable from './components/Togglable';
-import {
-  createBlog,
-  getBlogs,
-  likeBlog,
-  removeBlog,
-} from './reducers/blogReducer';
+import { createBlog, getBlogs } from './reducers/blogReducer';
 import { checkIfUserLoggedIn, login, logout } from './reducers/userReducer';
+import BlogsPage from './pages/BlogsPage';
+import UsersPage from './pages/UsersPage';
 
 function App() {
   const dispatch = useDispatch();
 
   const notification = useSelector((state) => state.notification);
-  const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
 
   const blogFormRef = useRef();
@@ -43,16 +40,6 @@ function App() {
     dispatch(createBlog(blogData));
   };
 
-  const handleRemoveBlog = (blog) => () => {
-    if (
-      !window.confirm(`Really remove blog ${blog.title} by ${blog.author}?`)
-    ) {
-      return;
-    }
-
-    dispatch(removeBlog(blog));
-  };
-
   return (
     <div>
       {notification.message && (
@@ -75,17 +62,11 @@ function App() {
           </Togglable>
         </>
       )}
-      <div>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            user={user}
-            onLikeBlog={() => dispatch(likeBlog(blog))}
-            onRemoveBlog={handleRemoveBlog(blog)}
-          />
-        ))}
-      </div>
+
+      <Routes>
+        <Route path={'/users'} element={<UsersPage />} />
+        <Route path={'/'} element={<BlogsPage />} />
+      </Routes>
     </div>
   );
 }

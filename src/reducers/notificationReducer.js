@@ -17,7 +17,6 @@ const notificationReducer = createSlice({
 
 let timeoutId;
 const showNotification = (message, type) => (dispatch) => {
-  debugger;
   dispatch(setNotification({ message, type }));
   if (timeoutId) {
     clearTimeout(timeoutId);

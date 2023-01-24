@@ -22,3 +22,12 @@
   color: #8b7800;
   border-color: #8b6b00;
 }
+
+.nav {
+  background-color: lightslategray;
+}
+
+.nav > * {
+  display: inline-block;
+  padding: 1em 0.5em;
+}

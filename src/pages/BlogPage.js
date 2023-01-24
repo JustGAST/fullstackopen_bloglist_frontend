@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { likeBlog, removeBlog } from '../reducers/blogReducer';
+import { commentBlog, likeBlog, removeBlog } from '../reducers/blogReducer';
 import { Link, useNavigate } from 'react-router-dom';
 
 const BlogPage = ({ blog }) => {
@@ -26,6 +26,13 @@ const BlogPage = ({ blog }) => {
     dispatch(likeBlog(blog));
   };
 
+  const handleCommentBlog = (event) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+    event.target.comment.value = '';
+    dispatch(commentBlog(blog, comment));
+  };
+
   return (
     <>
       <h3>{blog.title}</h3>
@@ -40,6 +47,10 @@ const BlogPage = ({ blog }) => {
       )}
 
       <h4>Comments</h4>
+      <form onSubmit={handleCommentBlog}>
+        <input name={'comment'} placeholder={'comment'} />
+        <button type={'submit'}>save</button>
+      </form>
       {blog.comments.length === 0 && <div>No comments yet</div>}
       {blog.comments.length > 0 && (
         <ul>

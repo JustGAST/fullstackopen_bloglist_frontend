@@ -50,6 +50,14 @@ const remove = async (blog) => {
   return response.data;
 };
 
+const addComment = async (blog, comment) => {
+  const response = await axios.post(`${baseUrl}/${blog.id}/comments`, {
+    comment,
+  });
+
+  return response.data;
+};
+
 const getConfigWithAuth = () => ({
   headers: { Authorization: token },
 });
@@ -60,6 +68,7 @@ const blogService = {
   create,
   update,
   remove,
+  addComment,
 };
 
 export default blogService;

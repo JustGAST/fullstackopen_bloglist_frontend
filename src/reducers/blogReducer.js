@@ -86,6 +86,20 @@ const removeBlog = (blog) => async (dispatch, getState) => {
   }
 };
 
+const commentBlog = (blog, comment) => async (dispatch, getState) => {
+  const commentedBlog = await blogService.addComment(blog, comment);
+
+  const { blogs } = getState();
+
+  dispatch(
+    setBlogs(
+      blogs.map((blogCurrent) =>
+        blogCurrent.id === blog.id ? commentedBlog : blogCurrent
+      )
+    )
+  );
+};
+
 export const { setBlogs, addBlog } = blogReducer.actions;
-export { getBlogs, createBlog, likeBlog, removeBlog };
+export { getBlogs, createBlog, likeBlog, removeBlog, commentBlog };
 export default blogReducer.reducer;

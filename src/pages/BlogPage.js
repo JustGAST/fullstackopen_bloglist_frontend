@@ -39,6 +39,16 @@ const BlogPage = ({ blog }) => {
         <button onClick={onRemoveBlog}>Remove</button>
       )}
 
+      <h4>Comments</h4>
+      {blog.comments.length === 0 && <div>No comments yet</div>}
+      {blog.comments.length > 0 && (
+        <ul>
+          {blog.comments.map((comment) => (
+            <li key={comment}>{comment}</li>
+          ))}
+        </ul>
+      )}
+
       <div>
         <Link to={'/'}>back</Link>
       </div>

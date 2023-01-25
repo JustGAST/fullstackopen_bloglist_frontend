@@ -5,6 +5,7 @@ import Blog from '../components/Blog';
 import NewBlogForm from '../components/NewBlogForm';
 import Togglable from '../components/Togglable';
 import { createBlog } from '../reducers/blogReducer';
+import { Stack } from 'react-bootstrap';
 
 const BlogsPage = () => {
   const dispatch = useDispatch();
@@ -21,14 +22,16 @@ const BlogsPage = () => {
 
   return (
     <div>
-      {user && (
-        <Togglable showButtonText="Create new" ref={blogFormRef}>
-          <NewBlogForm onSubmit={handleNewBlogFormSubmit} />
-        </Togglable>
-      )}
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <Stack gap={2}>
+        {user && (
+          <Togglable showButtonText="Create new" ref={blogFormRef}>
+            <NewBlogForm onSubmit={handleNewBlogFormSubmit} />
+          </Togglable>
+        )}
+        {blogs.map((blog) => (
+          <Blog key={blog.id} blog={blog} />
+        ))}
+      </Stack>
     </div>
   );
 };

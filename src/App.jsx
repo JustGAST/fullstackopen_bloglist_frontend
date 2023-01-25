@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Route, Routes, useMatch } from 'react-router-dom';
 
@@ -10,12 +10,15 @@ import UsersPage from './pages/UsersPage';
 import UserPage from './pages/UserPage';
 import { getUsers } from './reducers/usersReducer';
 import BlogPage from './pages/BlogPage';
-import LoginPage from './pages/LoginPage';
+import { Button, Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
+import LoginModal from './pages/modals/LoginModal';
 
 function App() {
   const dispatch = useDispatch();
   const userMatch = useMatch('/users/:id');
   const blogMatch = useMatch('/blogs/:id');
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const notification = useSelector((state) => state.notification);
   const user = useSelector((state) => state.user);
@@ -48,32 +51,72 @@ function App() {
   };
 
   return (
-    <div>
-      {notification.message && (
-        <Notification message={notification.message} type={notification.type} />
-      )}
-      <h1>Blogs</h1>
+    <>
+      <Navbar bg={'light'} expand={'lg'} className={'mb-2'}>
+        <Container>
+          <Navbar.Brand>Blogs</Navbar.Brand>
+          <Navbar.Toggle aria-controls={'basic-navbar-nav'} />
+          <Navbar.Collapse id={'basic-navbar-nav'}>
+            <Nav className={'me-auto'}>
+              <Nav.Link>
+                <Link to={'/'}>Blogs</Link>
+              </Nav.Link>
+              <Nav.Link>
+                <Link to={'/users'}>Users</Link>
+              </Nav.Link>
+              {user === null && (
+                <Nav.Link>
+                  <a href={'#'} onClick={() => setShowLoginModal(true)}>
+                    Login
+                  </a>
+                </Nav.Link>
+              )}
+            </Nav>
+            {user !== null && (
+              <Navbar.Text>
+                <Nav.Item>
+                  {user.name} logged in{' '}
+                  <Button variant={'link'} onClick={handleLogout}>
+                    Log out
+                  </Button>
+                </Nav.Item>
+              </Navbar.Text>
+            )}
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
 
-      <nav className={'nav'}>
-        <Link to={'/'}>Blogs</Link>
-        <Link to={'/users'}>Users</Link>
-        {user === null && <Link to={'/login'}>Login</Link>}
-        {user !== null && (
-          <div style={{ display: 'inline-block' }}>
-            {user.name} logged in{' '}
-            <button onClick={handleLogout}>Log out</button>
-          </div>
-        )}
-      </nav>
+      <LoginModal
+        show={showLoginModal}
+        onHide={() => setShowLoginModal(false)}
+      />
 
-      <Routes>
-        <Route path={'/blogs/:id'} element={<BlogPage blog={blogOnPage} />} />
-        <Route path={'/users/:id'} element={<UserPage user={userOnPage} />} />
-        <Route path={'/users'} element={<UsersPage />} />
-        <Route path={'/login'} element={<LoginPage />} />
-        <Route path={'/'} element={<BlogsPage />} />
-      </Routes>
-    </div>
+      <Container>
+        <Row>
+          <Col>
+            {notification.message && (
+              <Notification
+                message={notification.message}
+                type={notification.type}
+              />
+            )}
+
+            <Routes>
+              <Route
+                path={'/blogs/:id'}
+                element={<BlogPage blog={blogOnPage} />}
+              />
+              <Route
+                path={'/users/:id'}
+                element={<UserPage user={userOnPage} />}
+              />
+              <Route path={'/users'} element={<UsersPage />} />
+              <Route path={'/'} element={<BlogsPage />} />
+            </Routes>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }
 

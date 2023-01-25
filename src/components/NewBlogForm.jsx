@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'react-bootstrap';
 
 const NewBlogForm = ({ onSubmit }) => {
   const [title, setTitle] = useState('');
@@ -56,7 +57,9 @@ const NewBlogForm = ({ onSubmit }) => {
         </label>
       </div>
       <div>
-        <button type="submit">Save</button>
+        <Button variant={'success'} type="submit">
+          Save
+        </Button>
       </div>
     </form>
   );

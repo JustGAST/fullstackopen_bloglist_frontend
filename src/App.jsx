@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Route, Routes, useMatch } from 'react-router-dom';
+import { NavLink, Route, Routes, useMatch } from 'react-router-dom';
 
 import Notification from './components/Notification';
 import { getBlogs } from './reducers/blogReducer';
@@ -58,14 +58,14 @@ function App() {
           <Navbar.Toggle aria-controls={'basic-navbar-nav'} />
           <Navbar.Collapse id={'basic-navbar-nav'}>
             <Nav className={'me-auto'}>
-              <Nav.Link>
-                <Link to={'/'}>Blogs</Link>
+              <Nav.Link as={'span'}>
+                <NavLink to={'/'}>Blogs</NavLink>
               </Nav.Link>
-              <Nav.Link>
-                <Link to={'/users'}>Users</Link>
+              <Nav.Link as={'span'}>
+                <NavLink to={'/users'}>Users</NavLink>
               </Nav.Link>
               {user === null && (
-                <Nav.Link>
+                <Nav.Link as={'span'}>
                   <a href={'#'} onClick={() => setShowLoginModal(true)}>
                     Login
                   </a>

@@ -22,7 +22,7 @@ const BlogsPage = () => {
 
   return (
     <div>
-      <Stack gap={2}>
+      <Stack gap={2} className={'mb-3'}>
         {user && (
           <Togglable showButtonText="Create new" ref={blogFormRef}>
             <NewBlogForm onSubmit={handleNewBlogFormSubmit} />

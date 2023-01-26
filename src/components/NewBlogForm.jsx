@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 
 const NewBlogForm = ({ onSubmit }) => {
   const [title, setTitle] = useState('');
@@ -21,47 +21,34 @@ const NewBlogForm = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <h2>Create new blog</h2>
-      <div>
-        <label>
-          Title
-          <input
-            type="string"
-            name="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Author
-          <input
-            type="string"
-            name="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          URL
-          <input
-            type="string"
-            name="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <Button variant={'success'} type="submit">
-          Save
-        </Button>
-      </div>
-    </form>
+      <Form.Group>
+        <Form.Label>Title</Form.Label>
+        <Form.Control
+          type={'string'}
+          value={title}
+          onChange={({ target }) => setTitle(target.value)}
+        />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>Author</Form.Label>
+        <Form.Control
+          value={author}
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>URL</Form.Label>
+        <Form.Control
+          value={url}
+          onChange={({ target }) => setUrl(target.value)}
+        />
+      </Form.Group>
+      <Button className={'my-2'} variant={'success'} type="submit">
+        Save
+      </Button>
+    </Form>
   );
 };
 

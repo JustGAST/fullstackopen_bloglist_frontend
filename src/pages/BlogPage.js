@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { commentBlog, likeBlog, removeBlog } from '../reducers/blogReducer';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 const BlogPage = ({ blog }) => {
   if (!blog) {
@@ -61,7 +62,9 @@ const BlogPage = ({ blog }) => {
       )}
 
       <div>
-        <Link to={'/'}>back</Link>
+        <Button variant={'link'} onClick={() => navigate(-1)}>
+          back
+        </Button>
       </div>
     </>
   );

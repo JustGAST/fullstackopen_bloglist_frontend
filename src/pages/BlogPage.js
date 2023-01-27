@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { commentBlog, likeBlog, removeBlog } from '../reducers/blogReducer';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
+
+import { likeBlog, removeBlog } from '../reducers/blogReducer';
+import BlogComments from '../components/BlogPage/BlogComments';
 
 const BlogPage = ({ blog }) => {
-  if (!blog) {
-    return;
-  }
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+
+  if (!blog) {
+    return;
+  }
 
   const onRemoveBlog = () => {
     if (
@@ -27,45 +29,54 @@ const BlogPage = ({ blog }) => {
     dispatch(likeBlog(blog));
   };
 
-  const handleCommentBlog = (event) => {
-    event.preventDefault();
-    const comment = event.target.comment.value;
-    event.target.comment.value = '';
-    dispatch(commentBlog(blog, comment));
-  };
-
   return (
     <>
-      <h3>{blog.title}</h3>
-      <div className="blog-url">{blog.url}</div>
-      <div className="blog-likes">
-        Likes: {blog.likes} <button onClick={onLikeBlog}>Like</button>
-      </div>
-      <div>added by {blog.user && blog.user.name}</div>
+      <Row className={'my-4'}>
+        <Col>
+          <h2>{blog.title}</h2>
+        </Col>
+      </Row>
+      <Row className={'mb-4'}>
+        <Col>
+          <div className="blog-url">
+            <a href={blog.url}>{blog.url}</a>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <div className="blog-likes">
+            Likes: {blog.likes}{' '}
+            <Button className={'mx-2'} variant={'primary'} onClick={onLikeBlog}>
+              Like
+            </Button>
+          </div>
+        </Col>
+        <Col className={'d-flex justify-content-end'}>
+          <div className={'d-inline-block align-self-center'}>
+            added by {blog.user && blog.user.name}
+          </div>
 
-      {user && blog.user && user.username === blog.user.username && (
-        <button onClick={onRemoveBlog}>Remove</button>
-      )}
+          {user && blog.user && user.username === blog.user.username && (
+            <Button
+              variant={'outline-danger'}
+              onClick={onRemoveBlog}
+              className={'mx-2'}
+            >
+              Remove
+            </Button>
+          )}
+        </Col>
+      </Row>
+      <Row className={'mt-4'}>
+        <Col>
+          <BlogComments blog={blog} />
+        </Col>
+      </Row>
 
-      <h4>Comments</h4>
-      <form onSubmit={handleCommentBlog}>
-        <input name={'comment'} placeholder={'comment'} />
-        <button type={'submit'}>save</button>
-      </form>
-      {blog.comments.length === 0 && <div>No comments yet</div>}
-      {blog.comments.length > 0 && (
-        <ul>
-          {blog.comments.map((comment) => (
-            <li key={comment}>{comment}</li>
-          ))}
-        </ul>
-      )}
-
-      <div>
-        <Button variant={'link'} onClick={() => navigate(-1)}>
-          back
-        </Button>
-      </div>
+      <Button variant={'link'} onClick={() => navigate(-1)}>
+        back
+      </Button>
     </>
   );
 };
